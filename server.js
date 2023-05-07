@@ -42,12 +42,21 @@ async function mainMenu() {
 		}
 	])
 //////
-	async function addADepartment() {
-		const response = await inquirer.prompt
-		("select * from department")
-		console.table(response[0])
-		mainMenu()
-	}
+async function addADepartment() {
+  const response = await inquirer.prompt([
+    {
+      type: 'input',
+      message: 'Enter the name of the new department:',
+      name: 'name'
+    }
+  ]);
+
+  // execute SQL query to add new department
+  await db.promise().query(`INSERT INTO department (name) VALUES ('${response.name}')`);
+  
+  console.log(`New department "${response.name}" added successfully!`);
+  mainMenu();
+}
 
 	async function addARole() {
 		const response = await inquirer.prompt
@@ -81,9 +90,11 @@ if (response.menu === "View All Departments") {
 if (response.menu === "Add A Department") {
 	addADepartment()
 }
+
 if (response.menu === "Add A Role") {
 	addARole()
 }
+
 if (response.menu === "Add An Employee") {
 	addAnEmployee()
 }
@@ -91,7 +102,5 @@ if (response.menu === "Exit") {
 	process.exit()
 }
 }
-
-
 
 mainMenu()
